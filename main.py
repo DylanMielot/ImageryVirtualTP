@@ -1,15 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[13]:
-
-
 import tkinter as tk
 from tkinter import filedialog as fd
 from PIL import Image, ImageTk
-
-
-# In[14]:
 
 
 class ImageCanvas(tk.Canvas):
@@ -60,8 +54,6 @@ class ImageCanvasMeta(ImageCanvas):
         self.label["text"] = f"w={self.image.width()}; h={self.image.height()}; x={event.x}; y={event.y}"
 
 
-# In[15]:
-
 
 class App(tk.Tk):
     
@@ -96,8 +88,6 @@ class App(tk.Tk):
             self.canvas.pack()
 
 
-# In[ ]:
-
 
 win = App()
 
@@ -122,9 +112,6 @@ menuBar.add_cascade(label="Graph", menu=graphMenu)
 
 win.config(menu=menuBar)
 win.mainloop()
-
-
-# In[ ]:
 
 
 
