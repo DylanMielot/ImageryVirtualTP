@@ -89,30 +89,32 @@ class App(tk.Tk):
 
 
 
-win = App()
+#win = App()
 
-menuBar = tk.Menu(win)
+#menuBar = tk.Menu(win)
 
-fileMenu = tk.Menu(menuBar)
-fileMenu.add_command(label="New", command=win.newTP)
-fileMenu.add_command(label="Open", command=win.openImage)
-fileMenu.add_command(label="Quit", command=win.destroy)
-menuBar.add_cascade(label="File", menu=fileMenu)
+#fileMenu = tk.Menu(menuBar)
+#fileMenu.add_command(label="New", command=win.newTP)
+#fileMenu.add_command(label="Open", command=win.openImage)
+#fileMenu.add_command(label="Quit", command=win.destroy)
+#menuBar.add_cascade(label="File", menu=fileMenu)
 
-toolsMenu = tk.Menu(menuBar)
-toolsMenu.add_command(label="Drugs", command=None)
-toolsMenu.add_command(label="Sensors", command=None)
-toolsMenu.add_command(label="Reset", command=None)
-menuBar.add_cascade(label="Tools", menu=toolsMenu)
+#toolsMenu = tk.Menu(menuBar)
+#toolsMenu.add_command(label="Drugs", command=None)
+#toolsMenu.add_command(label="Sensors", command=None)
+#toolsMenu.add_command(label="Reset", command=None)
+#menuBar.add_cascade(label="Tools", menu=toolsMenu)
 
-graphMenu = tk.Menu(menuBar)
-graphMenu.add_command(label="Records", command=None)
-graphMenu.add_command(label="Show", command=None)
-menuBar.add_cascade(label="Graph", menu=graphMenu)
+#graphMenu = tk.Menu(menuBar)
+#graphMenu.add_command(label="Records", command=None)
+#graphMenu.add_command(label="Show", command=None)
+#menuBar.add_cascade(label="Graph", menu=graphMenu)
 
-win.config(menu=menuBar)
-win.mainloop()
+#win.config(menu=menuBar)
+#win.mainloop()
 
+from Zvi import ZviReader
 
-
+file = "C:/Users/Anthony/Documents/file.zvi"
+zvi = ZviReader.load(file)
 
