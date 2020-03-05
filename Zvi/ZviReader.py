@@ -11,8 +11,8 @@ import sys
 # Add an endline char when the entire progression is done
 def print_progressbar(step, maxi):
 
-    done = int(step/maxi*31) * "#"
-    rest = (30-int(step/maxi*31)) * " "
+    done = int(step/maxi*30) * "#"
+    rest = (30-int(step/maxi*30)) * " "
     percent = int(step/maxi*100)
     bar = f"[{done}{rest}]{percent}%"
 
@@ -86,6 +86,7 @@ class ZviReader(olefile.OleFileIO):
     def load(filename):
 
         if olefile.isOleFile(filename):
+
             reader = ZviReader(filename)
             n, f = reader.getImages()
             reader.close()
