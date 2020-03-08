@@ -89,9 +89,10 @@ class App(tk.Tk):
 			
 			image = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
 
-			self.canvas = ImageCanvas(self, image)
-			self.canvas.enableMouseClic(None)
-			self.canvas.pack()
+			self.canvas = ImageCanvas(self)
+			self.canvas.setImage(image)
+			self.canvas.setMouseClicEvent(None)
+			self.canvas.pack(fill=tk.BOTH, expand=True)
 
 
 def main():
