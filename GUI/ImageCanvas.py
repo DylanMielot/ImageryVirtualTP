@@ -12,29 +12,19 @@ import cv2
 # Insert image in a canvas
 class ImageCanvas(tk.Canvas):
 	
+
 	####################################################################################################
 	# Constructor
 	# Initialise inherited canvas and insert image
-	def __init__(self, master, imageSrc, width=600, **kwargs):
+	def __init__(self, master, src_image, **kwargs):
 
-		self.imageSrc = imageSrc
-	
-		# load image
-		w = width
-		h = int(imageSrc.shape[0] / imageSrc.shape[1] * width)
-
-		# resize image and generate it as tk image
-		cv_image = cv2.resize(imageSrc, (w,h))
-		pil_image = Image.fromarray(cv_image)
-		tk_image = ImageTk.PhotoImage(pil_image)
+		self.src_image = src_image
+		self.selected = [-1, -1]
 
 		# create canvas
-		tk.Canvas.__init__(self, master, width=w, height=h, *kwargs)
+		tk.Canvas.__init__(self, master, *kwargs)
+		self.bind('<Configure>', self.onResize)
 
-		# insert image
-		self.create_image(0,0, anchor=tk.NW, image=tk_image)
-		self.image = tk_image #image should be stored otherwise it is delete by garbage
-		
 	
 	####################################################################################################
 	# Enable the mouse clic event to be captured
@@ -51,32 +41,79 @@ class ImageCanvas(tk.Canvas):
 
 
 	####################################################################################################
+	# Set and display image
+	def setImage(self):
+
+		# set dimensions
+		w = self.winfo_width()
+		h = self.winfo_height()
+
+		# resize image and generate it as tk image
+		cv_image = cv2.resize(self.src_image, (w,h))
+		pil_image = Image.fromarray(cv_image)
+
+		# tk image must be stored otherwise it is deleted by garbage
+		self.tk_image = ImageTk.PhotoImage(master=self.master, image=pil_image)
+
+		# draw
+		self.create_image(0,0, anchor=tk.NW, image=self.tk_image)
+
+
+	####################################################################################################
+	# draw lines for showing selection
+	def setLines(self, x, y):
+
+		self.create_line(0, y, self.winfo_width(), y, width=1, fill="#ffffff")
+		self.create_line(x, 0, x, self.winfo_height(), width=1, fill="#ffffff")
+
+
+	####################################################################################################
 	# Event raised on mouse clic event
 	def mouseClic(self, event):
 		
-		self.create_image(0,0, anchor=tk.NW, image=self.image) # redraw image
+		self.setImage()
+		self.setLines(event.x, event.y)
 
-		# draw lines for showing selection
-		self.create_line(0, event.y, self["width"], event.y, width=1, fill="#ffffff")
-		self.create_line(event.x, 0, event.x, self["height"], width=1, fill="#ffffff")
+		#calc pos on source image
+		x = int(event.x / self.winfo_width() * self.src_image.shape[1])
+		y = int(event.y / self.winfo_height() * self.src_image.shape[0])
 
-		if hasattr(self, "onMouseClic"): self.onMouseClic(event.x, event.y)
+		#save it
+		self.selected[0] = x
+		self.selected[1] = y
+
+		# if a function is waiting for this event, call it
+		if hasattr(self, "onMouseClic"):
+			self.onMouseClic(x, y)
+
+
+	####################################################################################################
+	# Resize image
+	# called for the 1st display
+	def onResize(self, event):
+
+		self.setImage()
+
+		if self.selected != [-1, -1]:
+			x = int(self.selected[0] / self.src_image.shape[1] * self.winfo_width())
+			y = int(self.selected[1] / self.src_image.shape[0] * self.winfo_height())
+			self.setLines(x, y)
 
 
 def main():
 
 	from tkinter import filedialog as fd
 
-	FILENAME = fd.askopenfilename()
-	IMG = cv2.cvtColor(cv2.imread(FILENAME), cv2.COLOR_BGR2RGB)
-	print(IMG)
-	def PRINT_MOUSE_CLIC(x, y): print("clic:", x, y)
-
 	win = tk.Tk()
+
+	# const
+	FILENAME = fd.askopenfilename() # should be launched after main app window
+	IMG = cv2.cvtColor(cv2.imread(FILENAME), cv2.COLOR_BGR2RGB)
+	def PRINT_MOUSE_CLIC(x, y): print("clic:", x, y)
 
 	canvas = ImageCanvas(win, IMG)
 	canvas.enableMouseClic(PRINT_MOUSE_CLIC)
-	canvas.pack()
+	canvas.pack(fill=tk.BOTH, expand=True)
 
 	win.mainloop()
 

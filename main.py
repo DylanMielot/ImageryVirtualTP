@@ -89,7 +89,7 @@ class App(tk.Tk):
 			
 			image = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
 
-			self.canvas = ImageCanvasMeta(self, image)
+			self.canvas = ImageCanvas(self, image)
 			self.canvas.enableMouseClic(None)
 			self.canvas.pack()
 
