@@ -16,6 +16,8 @@ class ImageCanvas(tk.Canvas):
 	# Constructor
 	# Initialise inherited canvas and insert image
 	def __init__(self, master, imageSrc, width=600, **kwargs):
+
+		self.imageSrc = imageSrc
 	
 		# load image
 		w = width
@@ -63,8 +65,11 @@ class ImageCanvas(tk.Canvas):
 
 def main():
 
-	FILENAME = "testhd.jpg"
+	from tkinter import filedialog as fd
+
+	FILENAME = fd.askopenfilename()
 	IMG = cv2.cvtColor(cv2.imread(FILENAME), cv2.COLOR_BGR2RGB)
+	print(IMG)
 	def PRINT_MOUSE_CLIC(x, y): print("clic:", x, y)
 
 	win = tk.Tk()
