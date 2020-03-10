@@ -7,55 +7,37 @@ from tkinter import filedialog as fd
 from PIL import Image, ImageTk
 import cv2
 
+
 from GUI.ImageCanvas import ImageCanvas
-
-
-#class ImageCanvas(tk.Canvas):
+		
+		
+#class ImageCanvasMeta(ImageCanvas):
 	
 #	def __init__(self, master, imagefile, **kwargs):
-	
-#		pil_image = Image.open(imagefile)
-#		tk_image = ImageTk.PhotoImage(pil_image)
+		
+#		self.pos = None
 
-#		tk.Canvas.__init__(self, master, width=pil_image.size[0], height=pil_image.size[1], *kwargs)
-#		self.create_image(0,0, anchor=tk.NW, image=tk_image)
-#		self.image = tk_image
+#		frame = tk.Frame(master)
+		
+#		ImageCanvas.__init__(self, frame, imagefile, **kwargs)
+#		ImageCanvas.pack(self)
+		
+#		txt = f"w={self.image.width()}; h={self.image.height()}"
+#		self.label = tk.Label(frame, text=txt)
+#		self.label.pack(side=tk.RIGHT)
+		
+		
+#	def pack(self, *args, **kwargs):
+		
+#		self.master.pack(*args, **kwargs)
 		
 	
 #	def select(self, event):
 		
-#		self.create_image(0,0, anchor=tk.NW, image=self.image)
-#		self.create_line(0, event.y, self["width"], event.y, width=1, fill="#ffffff")
-#		self.create_line(event.x, 0, event.x, self["height"], width=1, fill="#ffffff")
+#		self.pos = (event.x, event.y)
 		
-		
-class ImageCanvasMeta(ImageCanvas):
-	
-	def __init__(self, master, imagefile, **kwargs):
-		
-		self.pos = None
-
-		frame = tk.Frame(master)
-		
-		ImageCanvas.__init__(self, frame, imagefile, **kwargs)
-		ImageCanvas.pack(self)
-		
-		txt = f"w={self.image.width()}; h={self.image.height()}"
-		self.label = tk.Label(frame, text=txt)
-		self.label.pack(side=tk.RIGHT)
-		
-		
-	def pack(self, *args, **kwargs):
-		
-		self.master.pack(*args, **kwargs)
-		
-	
-	def select(self, event):
-		
-		self.pos = (event.x, event.y)
-		
-		ImageCanvas.select(self, event)
-		self.label["text"] = f"w={self.image.width()}; h={self.image.height()}; x={event.x}; y={event.y}"
+#		ImageCanvas.select(self, event)
+#		self.label["text"] = f"w={self.image.width()}; h={self.image.height()}; x={event.x}; y={event.y}"
 
 
 

@@ -23,9 +23,44 @@ class ImageCanvas(tk.Canvas):
 		self.bind('<Configure>', self.onResize)
 		self.bind("<Button-1>", self.mouseClic)
 		
+		self.src_image = None
 		self.onMouseClic = None
-		self.selected = [-1, -1]
+		self.selected = None
 	
+	####################################################################################################
+	# return source image dimensions
+	def getDims(self):
+
+		try:
+			return self.src_image.shape[1], self.src_image.shape[0]
+		except:
+			return None
+	
+
+	####################################################################################################
+	# return selection position (source image pixels coordinates)
+	def getSelection(self):
+
+		try:
+			x = int(self.src_image.shape[1] * self.selected[0])
+			y = int(self.src_image.shape[0] * self.selected[1])
+			return x, y
+		except:
+			return None
+	
+
+	####################################################################################################
+	# return pixel infos at selected position
+	def getPixel(self):
+
+		try:
+			x, y = self.getSelection()
+			return list(self.src_image[y, x])
+		except:
+			return None
+
+
+
 	####################################################################################################
 	# Set the image to use
 	def setImage(self, src_image):
@@ -33,7 +68,7 @@ class ImageCanvas(tk.Canvas):
 		self.src_image = src_image
 
 		self.displayImage(src_image)
-		if self.selected != [-1, -1]:
+		if self.selected:
 			self.setLines(self.selected[0], self.selected[1])
 
 
@@ -78,6 +113,7 @@ class ImageCanvas(tk.Canvas):
 	def mouseClic(self, event):
 
 		#calc pos on source image
+		self.selected = [-1, -1]
 		self.selected[0] = event.x / self.winfo_width()
 		self.selected[1] = event.y / self.winfo_height()
 
@@ -97,7 +133,7 @@ class ImageCanvas(tk.Canvas):
 	def onResize(self, event):
 
 		self.displayImage(self.src_image)
-		if self.selected != [-1, -1]:
+		if self.selected:
 			self.setLines(self.selected[0], self.selected[1])
 
 
@@ -114,7 +150,8 @@ def main():
 
 	IMG1 = cv2.cvtColor(cv2.imread(FILENAME1), cv2.COLOR_BGR2RGB)
 	IMG2 = cv2.cvtColor(cv2.imread(FILENAME2), cv2.COLOR_BGR2RGB)
-	def PRINT_MOUSE_CLIC(x, y): print("clic:", x, y)
+	def PRINT_MOUSE_CLIC(x, y):
+		print("clic:", (x, y), "==", canvas.getSelection(), "| dims:", canvas.getDims(), "| color:", canvas.getPixel())
 	def SET_IMG1(): canvas.setImage(IMG1)
 	def SET_IMG2(): canvas.setImage(IMG2)
 
