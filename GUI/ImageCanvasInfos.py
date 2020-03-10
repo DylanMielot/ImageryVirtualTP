@@ -18,7 +18,6 @@ class ImageCanvasInfos(tk.Label):
 		tk.Label.__init__(self, master, **kwargs)
 
 		self.canvas = canvas
-		self.linkCanvas()
 		self.display()
 
 	####################################################################################################

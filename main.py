@@ -9,36 +9,7 @@ import cv2
 
 
 from GUI.ImageCanvas import ImageCanvas
-		
-		
-#class ImageCanvasMeta(ImageCanvas):
-	
-#	def __init__(self, master, imagefile, **kwargs):
-		
-#		self.pos = None
-
-#		frame = tk.Frame(master)
-		
-#		ImageCanvas.__init__(self, frame, imagefile, **kwargs)
-#		ImageCanvas.pack(self)
-		
-#		txt = f"w={self.image.width()}; h={self.image.height()}"
-#		self.label = tk.Label(frame, text=txt)
-#		self.label.pack(side=tk.RIGHT)
-		
-		
-#	def pack(self, *args, **kwargs):
-		
-#		self.master.pack(*args, **kwargs)
-		
-	
-#	def select(self, event):
-		
-#		self.pos = (event.x, event.y)
-		
-#		ImageCanvas.select(self, event)
-#		self.label["text"] = f"w={self.image.width()}; h={self.image.height()}; x={event.x}; y={event.y}"
-
+from GUI.ImageCanvasInfos import ImageCanvasInfos
 
 
 class App(tk.Tk):
@@ -53,6 +24,9 @@ class App(tk.Tk):
 		
 		if self.canvas:
 			self.canvas.destroy()
+			self.canvas = None
+
+			self.canvasInfos.destroy()
 			self.canvas = None
 
 
@@ -72,9 +46,13 @@ class App(tk.Tk):
 			image = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
 
 			self.canvas = ImageCanvas(self)
-			self.canvas.setImage(image)
-			self.canvas.setMouseClicEvent(None)
 			self.canvas.pack(fill=tk.BOTH, expand=True)
+
+			self.canvasInfos = ImageCanvasInfos(self, self.canvas)
+			self.canvasInfos.pack()
+
+			self.canvas.setImage(image)
+			self.canvas.setMouseClicEvent(lambda x,y: self.canvasInfos.display())
 
 
 def main():
@@ -101,27 +79,55 @@ def main():
 	menuBar.add_cascade(label="Graph", menu=graphMenu)
 
 	win.config(menu=menuBar)
+	win.title("ImageryVirtualTP")
 	win.mainloop()
 
-main()
 
-from Zvi import ZviReader, ZviBytesToArray
+	
+########################################################################################################
+#if __name__ == "__main__":
+	#main()
 
-file = "C:/Users/Anthony/Documents/file.zvi"
-#zvi = ZviReader.load(file)
+from Zvi import ZviReader, ZviBytesToArray, print_progressbar
 
-#import numpy as np
-#import cv2
+#file = "C:/Users/Anthony/Documents/file.zvi"
+file = "E:/Imagerie/TP virtuel/file.zvi"
+n, images = ZviReader.load(file)
 
-#with open("C:/Users/Anthony/Documents/Contents", mode="rb") as file:
-##with open("C:/Users/Anthony/Documents/img.16b", mode="rb") as file:
-#	data = file.read()
+import numpy as np
+import cv2
 
-#	w = 1384
-#	h = 1036
-#	pixels = data[-w*h*2:]
 
-#	img = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w))
+w = 1384
+h = 1036
 
-#cv2.imshow("", cv2.resize(img*100, (640,480)))
-#cv2.waitKey(0)
+for i in range(n):
+	pixels = images[i][-w*h*2:]
+	images[i] = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w)).astype(np.float)
+	images[i][...] /= 4096
+
+	print_progressbar(i, n-1)
+
+
+key = 0
+i = 0
+while key != ord('a'):
+
+	#w = 1384
+	#h = 1036
+	#pixels = images[i][-w*h*2:]
+
+	#img = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w)).astype(np.float)
+	#img[...] /= 4096
+
+	cv2.imshow("", cv2.resize(images[i], (640,480)))
+	key = cv2.waitKey(1)
+
+	if key == ord('d'):
+		i = min(n-1, i+1)
+	if key == ord('q'):
+		i = max(0, i-1)
+
+	print(i)
+
+cv2.destroyAllWindows()
