@@ -20,17 +20,6 @@ class ImageCanvasInfos(tk.Label):
 		self.canvas = canvas
 		self.display()
 
-	####################################################################################################
-	# configure the ImageCanvas for update infos before display
-	def linkCanvas(self):
-
-		def before(*args):
-			self.display()
-			self.canvas(*args)
-		return before
-
-		self.canvas.displayImage = update(self.canvas.displayImage)
-
 	
 	####################################################################################################
 	def display(self):

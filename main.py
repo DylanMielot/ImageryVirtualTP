@@ -50,15 +50,14 @@ class App(tk.Tk):
 
 			self.clear()
 			
-			#image = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
 			self.n_frame, self.images = ZviReader.load(filename)
 
 			w = 1384
 			h = 1036
 			for i in range(self.n_frame):
 				pixels = self.images[i][-w*h*2:]
-				self.images[i] = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w))#.astype(np.float32)
-				#self.images[i] /= np.max(self.images[i])#4096
+				self.images[i] = np.frombuffer(pixels, dtype=np.int16).reshape((h,w))
+				#self.images[i] /= 4096
 
 				print_progressbar(i, self.n_frame-1)
 
@@ -72,18 +71,21 @@ class App(tk.Tk):
 			self.canvas.setMouseClicEvent(lambda x,y: self.canvasInfos.display())
 
 			def prevf():
-				frame_counter["text"] = str(int(frame_counter["text"])-1)
+				n = max(slider.get()-1, 0)
+				slider.set(n)
+				self.show(n)
 			def nextf():
-				n = int(frame_counter["text"])+1
-				frame_counter["text"] = str(n)
+				n = min(slider.get()+1, self.n_frame)
+				slider.set(n)
 				self.show(n)
 
 			button_prev = tk.Button(cont, text="<", command=prevf)
+			slider = tk.Scale(cont, from_=0, to=self.n_frame-1, orient=tk.HORIZONTAL, command=self.show)
 			frame_counter = tk.Label(cont, text="0")
 			button_next = tk.Button(cont, text=">", command=nextf)
 
 			button_prev.grid(row=0, column=0)
-			frame_counter.grid(row=0, column=1)
+			slider.grid(row=0, column=1)
 			button_next.grid(row=0, column=2)
 			self.canvasInfos.grid(row=0, column=3)
 
@@ -93,10 +95,8 @@ class App(tk.Tk):
 	#########################################################################################
 	def show(self, n_frame):
 
-		self.canvas.setImage(self.images[n_frame])
+		self.canvas.setImage(self.images[int(n_frame)])
 		self.canvasInfos.display()
-
-		#cv2.imshow("", cv2.resize(self.images[n_frame], (640,480)))
 
 
 #############################################################################################

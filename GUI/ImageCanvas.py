@@ -55,10 +55,13 @@ class ImageCanvas(tk.Canvas):
 
 		try:
 			x, y = self.getSelection()
-			return list(self.src_image[y, x])
 		except:
 			return None
 
+		if self.src_image.ndim == 3:
+			return list(self.src_image[y, x])
+		else:
+			return self.src_image[y, x]
 
 
 	####################################################################################################
