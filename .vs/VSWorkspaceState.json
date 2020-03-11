@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\GUI"
+    "\\GUI",
+    "\\Zvi"
   ],
-  "SelectedNode": "\\GUI\\ImageCanvasInfos.py",
+  "SelectedNode": "\\main.py",
   "PreviewInSolutionExplorer": false
 }

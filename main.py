@@ -85,8 +85,8 @@ def main():
 
 	
 ########################################################################################################
-#if __name__ == "__main__":
-	#main()
+if __name__ == "__main__":
+	main()
 
 from Zvi import ZviReader, ZviBytesToArray, print_progressbar
 
@@ -113,13 +113,6 @@ key = 0
 i = 0
 while key != ord('a'):
 
-	#w = 1384
-	#h = 1036
-	#pixels = images[i][-w*h*2:]
-
-	#img = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w)).astype(np.float)
-	#img[...] /= 4096
-
 	cv2.imshow("", cv2.resize(images[i], (640,480)))
 	key = cv2.waitKey(1)
 
@@ -127,7 +120,5 @@ while key != ord('a'):
 		i = min(n-1, i+1)
 	if key == ord('q'):
 		i = max(0, i-1)
-
-	print(i)
 
 cv2.destroyAllWindows()
