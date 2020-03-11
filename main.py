@@ -5,21 +5,26 @@
 import tkinter as tk
 from tkinter import filedialog as fd
 from PIL import Image, ImageTk
+import numpy as np
 import cv2
 
 
 from GUI.ImageCanvas import ImageCanvas
 from GUI.ImageCanvasInfos import ImageCanvasInfos
+from Zvi import ZviReader, ZviBytesToArray, print_progressbar
 
 
+#############################################################################################
 class App(tk.Tk):
 	
+	#########################################################################################
 	def __init__(self):
 		
 		tk.Tk.__init__(self)
 		self.canvas = None
 		
 	
+	#########################################################################################
 	def clear(self):
 		
 		if self.canvas:
@@ -30,11 +35,13 @@ class App(tk.Tk):
 			self.canvas = None
 
 
+	#########################################################################################
 	def newTP(self):
 
 		self.clear()
 
 
+	#########################################################################################
 	def openImage(self):
 
 		filename = fd.askopenfilename()
@@ -43,18 +50,56 @@ class App(tk.Tk):
 
 			self.clear()
 			
-			image = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
+			#image = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
+			self.n_frame, self.images = ZviReader.load(filename)
+
+			w = 1384
+			h = 1036
+			for i in range(self.n_frame):
+				pixels = self.images[i][-w*h*2:]
+				self.images[i] = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w))#.astype(np.float32)
+				#self.images[i] /= np.max(self.images[i])#4096
+
+				print_progressbar(i, self.n_frame-1)
 
 			self.canvas = ImageCanvas(self)
 			self.canvas.pack(fill=tk.BOTH, expand=True)
 
-			self.canvasInfos = ImageCanvasInfos(self, self.canvas)
-			self.canvasInfos.pack()
+			cont = tk.Frame(self)
+			cont.pack(side=tk.BOTTOM)
 
-			self.canvas.setImage(image)
+			self.canvasInfos = ImageCanvasInfos(cont, self.canvas)
 			self.canvas.setMouseClicEvent(lambda x,y: self.canvasInfos.display())
 
+			def prevf():
+				frame_counter["text"] = str(int(frame_counter["text"])-1)
+			def nextf():
+				n = int(frame_counter["text"])+1
+				frame_counter["text"] = str(n)
+				self.show(n)
 
+			button_prev = tk.Button(cont, text="<", command=prevf)
+			frame_counter = tk.Label(cont, text="0")
+			button_next = tk.Button(cont, text=">", command=nextf)
+
+			button_prev.grid(row=0, column=0)
+			frame_counter.grid(row=0, column=1)
+			button_next.grid(row=0, column=2)
+			self.canvasInfos.grid(row=0, column=3)
+
+			self.show(0)
+
+
+	#########################################################################################
+	def show(self, n_frame):
+
+		self.canvas.setImage(self.images[n_frame])
+		self.canvasInfos.display()
+
+		#cv2.imshow("", cv2.resize(self.images[n_frame], (640,480)))
+
+
+#############################################################################################
 def main():
 
 	win = App()
@@ -82,43 +127,45 @@ def main():
 	win.title("ImageryVirtualTP")
 	win.mainloop()
 
+	return win
+
 
 	
 ########################################################################################################
 if __name__ == "__main__":
-	main()
+	app = main()
 
-from Zvi import ZviReader, ZviBytesToArray, print_progressbar
+#from Zvi import ZviReader, ZviBytesToArray, print_progressbar
 
-#file = "C:/Users/Anthony/Documents/file.zvi"
-file = "E:/Imagerie/TP virtuel/file.zvi"
-n, images = ZviReader.load(file)
+##file = "C:/Users/Anthony/Documents/file.zvi"
+#file = "E:/Imagerie/TP virtuel/file.zvi"
+#n, images = ZviReader.load(file)
 
-import numpy as np
-import cv2
-
-
-w = 1384
-h = 1036
-
-for i in range(n):
-	pixels = images[i][-w*h*2:]
-	images[i] = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w)).astype(np.float)
-	images[i][...] /= 4096
-
-	print_progressbar(i, n-1)
+#import numpy as np
+#import cv2
 
 
-key = 0
-i = 0
-while key != ord('a'):
+#w = 1384
+#h = 1036
 
-	cv2.imshow("", cv2.resize(images[i], (640,480)))
-	key = cv2.waitKey(1)
+#for i in range(n):
+#	pixels = images[i][-w*h*2:]
+#	images[i] = np.frombuffer(pixels, dtype=np.uint16).reshape((h,w)).astype(np.float)
+#	images[i][...] /= 4096
 
-	if key == ord('d'):
-		i = min(n-1, i+1)
-	if key == ord('q'):
-		i = max(0, i-1)
+#	print_progressbar(i, n-1)
 
-cv2.destroyAllWindows()
+
+#key = 0
+#i = 0
+#while key != ord('a'):
+
+#	cv2.imshow("", cv2.resize(images[i], (640,480)))
+#	key = cv2.waitKey(0)
+
+#	if key == ord('d'):
+#		i = min(n-1, i+1)
+#	if key == ord('q'):
+#		i = max(0, i-1)
+
+#cv2.destroyAllWindows()
