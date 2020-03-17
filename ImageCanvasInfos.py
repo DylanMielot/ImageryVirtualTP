@@ -6,7 +6,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import cv2
 
-from GUI.ImageCanvas import ImageCanvas
+from ImageCanvas import ImageCanvas
 		
 		
 ########################################################################################################
