@@ -3,6 +3,7 @@
 
 
 import tkinter as tk
+from tkinter import filedialog as fd
 from PIL import Image, ImageTk
 import cv2
 
@@ -86,7 +87,7 @@ class ImageCanvas(tk.Canvas):
 		# image transforms
 		cv_image = cv2.resize(src_image, (w,h))
 		pil_image = Image.fromarray(cv_image)
-		# tk image must be stored otherwise it is deleted by garbage
+		## tk image must be stored otherwise it is deleted by garbage
 		self.tk_image = ImageTk.PhotoImage(master=self.master, image=pil_image)
 
 		# draw
@@ -142,8 +143,6 @@ class ImageCanvas(tk.Canvas):
 
 ########################################################################################################
 def main():
-
-	from tkinter import filedialog as fd
 
 	win = tk.Tk()
 

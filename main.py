@@ -10,7 +10,7 @@ from PIL import Image, ImageTk
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from sklearn.metrics import auc
+from sklearn import metrics
 
 
 from ImageCanvas import ImageCanvas
@@ -186,7 +186,7 @@ class App(tk.Tk):
 			plt.plot(self.rec[1], self.rec[0])
 			plt.xlabel('Temps (ms)')
 			plt.ylabel('Intensite')
-			#plt.axis([0, self.infos[2], 0, int(max(self.rec[0])*1.1)])
+			plt.axis([0, self.infos[2], 0, int(max(self.rec[0])*1.1)])
 			plt.title('Intensite en fonction du temps en {}'.format(self.rec_pos))
 			plt.show()
 		else:
@@ -196,7 +196,7 @@ class App(tk.Tk):
 	#########################################################################################
 	def auc(self):
 
-		messagebox.showinfo("Calcul AUC", "Mesure de l'AUC : {}".format(auc(self.rec[1], self.rec[0])))
+		messagebox.showinfo("Calcul AUC", "Mesure de l'AUC : {}".format(metrics.auc(self.rec[1], self.rec[0])))
 
 
 #############################################################################################
